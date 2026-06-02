@@ -3,6 +3,7 @@ package com.rag.backend.exception;
 import com.rag.backend.dto.response.ApiResponse;
 import io.github.resilience4j.ratelimiter.RequestNotPermitted;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -49,7 +50,15 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(RequestNotPermitted.class)
     public ResponseEntity<ApiResponse<Void>> handleRateLimitException(RequestNotPermitted ex) {
         log.warn("Rate limit exceeded: {}", ex.getMessage());
-        ApiResponse<Void> response = ApiResponse.error(HttpStatus.TOO_MANY_REQUESTS.value(), "Rate limit exceeded. Please try again later.");
-        return new ResponseEntity<>(response, HttpStatus.TOO_MANY_REQUESTS);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Retry-After", "60");
+
+        ApiResponse<Void> response = ApiResponse.error(
+                HttpStatus.TOO_MANY_REQUESTS.value(),
+                "Rate limit exceeded. Please try again later."
+        );
+
+        return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS).headers(headers).body(response);
     }
 }
