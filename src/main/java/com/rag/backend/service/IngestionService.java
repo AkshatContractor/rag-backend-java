@@ -22,6 +22,7 @@ public class IngestionService {
 
     private final EmbeddingModel embeddingModel;
     private final EmbeddingStore<TextSegment> embeddingStore;
+    private final FileStorageService fileStorageService;
 
     public void ingest(IngestRequest ingestRequest) {
         String content = null;
@@ -58,6 +59,7 @@ public class IngestionService {
 
     private String readFileContent(MultipartFile file) {
         try {
+            fileStorageService.storeFile(file);
             return new String(file.getBytes());
         } catch (Exception e) {
             throw new RuntimeException("Failed to read file: " + file.getOriginalFilename(), e);

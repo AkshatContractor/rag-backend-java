@@ -34,3 +34,4 @@ build/
 /Dockerfile
 /src/main/resources/application.yaml
 /src/main/resources/prompt.txt
+/uploads/
