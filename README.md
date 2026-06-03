@@ -1,54 +1,153 @@
-RAG Backend Java
+# RAG Backend Java
 
-A Java-based backend service designed as a learning demonstration and practical implementation of Retrieval-Augmented Generation (RAG) pipelines. Built with Spring Boot, this service powers the interactive, context-aware AI features on www.akshatcontractor.in.
+A Java-based backend service that demonstrates and implements Retrieval-Augmented Generation (RAG) concepts using Spring Boot. The project powers the context-aware AI features available on **[www.akshatcontractor.in](http://www.akshatcontractor.in)**, combining semantic search with large language models to generate grounded responses.
 
-🌐 Live Deployment
+## 🌍 Live Deployment
 
-This service is deployed as a serverless backend running on Google Cloud Run Functions (formerly Cloud Functions). It actively processes queries, retrieves semantic context from a vector database, and interacts with generative LLMs to serve real-time requests on the portfolio website.
+This service runs as a serverless backend on Google Cloud Run and actively powers AI-driven interactions on the portfolio website.
 
-🚀 Features
+Its responsibilities include:
 
-Gemini AI Integration: Connects to Google's Gemini models for generating responses based on retrieved context.
+* Processing user queries
+* Retrieving relevant semantic context from a vector database
+* Constructing enriched prompts
+* Generating responses through Gemini
 
-Vector Search with Qdrant: Uses Qdrant for semantic similarity lookups to retrieve relevant document context before querying the LLM.
+## ✨ Highlights
 
-Document Ingestion: Demonstrates how to parse, chunk, and extract text from files (such as PDFs, Markdown, JSON, or Text).
+### 🤖 Gemini Integration
 
-Metadata Support: Attaches and queries payload metadata (such as source or category) within Qdrant vectors.
+Connects with Google's Gemini models to generate responses grounded in retrieved knowledge rather than relying solely on model memory.
 
-REST APIs: Simple endpoints for triggering document ingestion, custom prompt queries, and vector storage indexing.
+### 🔎 Semantic Search with Qdrant
 
-📂 Project Structure & Architecture
+Uses vector similarity search to identify the most relevant pieces of information before response generation.
 
-This project isolates the REST endpoints from the core vector database interactions and generative AI orchestrations to provide a clear path for studying RAG concepts in a serverless environment.
+### 📄 Document Ingestion
 
+Supports document parsing and chunking workflows that prepare content for embedding and retrieval.
+
+### 🏷️ Metadata-Aware Retrieval
+
+Associates metadata such as source, category, or document identifiers with stored vectors, enabling richer retrieval strategies.
+
+### 🔌 REST APIs
+
+Provides endpoints for:
+
+* Document ingestion
+* Knowledge base indexing
+* Context-aware querying
+
+---
+
+## 🏗️ Project Structure
+
+```text
 rag-backend-java/
 ├── src/
 │   ├── main/
 │   │   ├── java/com/akshatcontractor/rag/
-│   │   │   ├── config/          # Configuration beans (Qdrant, Gemini, ThreadPools)
-│   │   │   ├── controller/      # REST API endpoints (Ingestion & Query APIs)
-│   │   │   ├── model/           # Data Transfer Objects (DTOs) and request schemas
-│   │   │   ├── service/         # Core logical components
-│   │   │   │   ├── DocumentService.java # File parsing & text chunking
-│   │   │   │   ├── EmbeddingService.java # Converting text blocks to vectors
-│   │   │   │   ├── QdrantService.java    # Operations with Qdrant vector database
-│   │   │   │   └── RagService.java       # Coordinates the Query -> Retrieve -> Generate flow
+│   │   │   ├── config/
+│   │   │   ├── controller/
+│   │   │   ├── model/
+│   │   │   ├── service/
+│   │   │   │   ├── DocumentService.java
+│   │   │   │   ├── EmbeddingService.java
+│   │   │   │   ├── QdrantService.java
+│   │   │   │   └── RagService.java
 │   │   │   └── RagBackendApplication.java
 │   │   └── resources/
-│   │       ├── application.yml  # Global configuration parameters
+│   │       ├── application.yml
 │   │       └── application-dev.yml
-│   └── test/                    # Learning tests and verification suites
-├── pom.xml                      # Build file containing core framework declarations
+│   └── test/
+├── pom.xml
 └── README.md
+```
 
+---
 
-Component Breakdown
+## ⚙️ Architecture
 
-DocumentService: Demonstrates the ingestion phase. It handles incoming files, parses their text, and splits them into manageable chunks (using strategies like fixed-size windows with overlaps) to prepare them for vectorization.
+The application separates document processing, vector operations, and AI orchestration into dedicated services to keep the codebase modular and easy to understand.
 
-EmbeddingService: Handles the transition from raw text to numerical representations. It interfaces with embedding models to turn text chunks into dense vectors.
+### 📥 DocumentService
 
-QdrantService: Manages the storage and retrieval aspects. It interacts with the Qdrant vector database, creating collections, upserting vectorized text chunks with associated payload metadata, and performing similarity searches.
+Handles document ingestion and preprocessing.
 
-RagService: The orchestrator of the RAG pipeline. When a query is received, it directs the similarity search in Qdrant, compiles the retrieved text chunks as context, constructs the enriched prompt, and queries Gemini AI for the final answer.
+Responsibilities:
+
+* Reading uploaded files
+* Extracting text content
+* Splitting content into chunks
+* Preparing data for embedding generation
+
+### 🧠 EmbeddingService
+
+Converts text chunks into vector embeddings using the configured embedding model.
+
+Responsibilities:
+
+* Embedding generation
+* Batch processing
+* Vector preparation for storage
+
+### 🗄️ QdrantService
+
+Acts as the abstraction layer over the vector database.
+
+Responsibilities:
+
+* Collection management
+* Vector storage
+* Metadata persistence
+* Similarity search operations
+
+### 🔄 RagService
+
+Coordinates the complete Retrieval-Augmented Generation workflow.
+
+```text
+User Query
+    │
+    ▼
+Generate Query Embedding
+    │
+    ▼
+Search Qdrant
+    │
+    ▼
+Retrieve Relevant Chunks
+    │
+    ▼
+Build Contextual Prompt
+    │
+    ▼
+Query Gemini
+    │
+    ▼
+Return Response
+```
+
+---
+
+## 🛠️ Technology Stack
+
+* Java 21
+* Spring Boot
+* LangChain4j
+* Gemini API
+* Qdrant
+* Maven
+* Google Cloud Run
+
+---
+
+## 🎯 Why This Project?
+
+This project serves two purposes:
+
+1. Powering the AI functionality behind **[www.akshatcontractor.in](http://www.akshatcontractor.in)**
+2. Acting as a practical reference for developers exploring Retrieval-Augmented Generation in Java
+
+It demonstrates the complete RAG lifecycle—from document ingestion and vectorization to semantic retrieval and context-grounded response generation.
