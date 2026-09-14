@@ -26,8 +26,12 @@ public class PromptService {
     }
 
     public String render(String question, String context) {
+        log.info("--- RETRIEVED CONTEXT START ---");
+        log.info("Length: {}, Content:\n{}", context != null ? context.length() : 0, context);
+        log.info("--- RETRIEVED CONTEXT END ---");
+
         return template
                 .replace("{question}", question)
-                .replace("{context}", context);
+                .replace("{context}", context != null ? context : "");
     }
 }
