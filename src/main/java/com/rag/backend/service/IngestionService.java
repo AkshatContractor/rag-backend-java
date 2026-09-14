@@ -3,6 +3,7 @@ package com.rag.backend.service;
 import com.rag.backend.dto.request.IngestRequest;
 import dev.langchain4j.data.document.Document;
 import dev.langchain4j.data.document.Metadata;
+import dev.langchain4j.data.document.parser.apache.pdfbox.ApachePdfBoxDocumentParser;
 import dev.langchain4j.data.document.splitter.DocumentSplitters;
 import dev.langchain4j.data.embedding.Embedding;
 import dev.langchain4j.data.segment.TextSegment;
@@ -12,6 +13,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 
@@ -60,7 +64,21 @@ public class IngestionService {
     private String readFileContent(MultipartFile file) {
         try {
             fileStorageService.storeFile(file);
-            return new String(file.getBytes());
+
+            String filename = file.getOriginalFilename();
+            log.info("Uploaded file name: {}", filename);
+
+            if (filename != null && filename.toLowerCase().endsWith(".pdf")) {
+                log.info("Parsing PDF using ApachePdfBoxDocumentParser...");
+                try (InputStream inputStream = file.getInputStream()) {
+                    Document parsedDoc = new ApachePdfBoxDocumentParser().parse(inputStream);
+                    log.info("Extracted text preview (first 100 chars): {}",
+                            parsedDoc.text().substring(0, Math.min(100, parsedDoc.text().length())));
+                    return parsedDoc.text();
+                }
+            }
+
+            return new String(file.getBytes(), StandardCharsets.UTF_8);
         } catch (Exception e) {
             throw new RuntimeException("Failed to read file: " + file.getOriginalFilename(), e);
         }
